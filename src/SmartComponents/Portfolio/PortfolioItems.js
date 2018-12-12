@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import propTypes from 'prop-types';
-import { parse } from 'querystring';
 import { Section } from '@red-hat-insights/insights-frontend-components';
 import { Toolbar, ToolbarGroup, ToolbarItem, ToolbarSection } from '@patternfly/react-core';
 import ContentGallery from '../../SmartComponents/ContentGallery/ContentGallery';
@@ -26,11 +25,14 @@ class PortfolioItems extends Component {
   }
 
   componentDidMount() {
-    let filter = this.props.computedMatch.params.filter;
-    console.log('PortfolioItems filter: ', filter);
-    let parsed = parse(filter);
-    console.log('PortfolioItems parsed filter: ', parsed);
-    this.fetchData(parsed);
+    this.fetchData(this.props.match.params.id);
+  }
+
+  // TODO: can be moved to redux action
+  componentDidUpdate(prevProps) {
+    if (prevProps.match.params.id !== this.props.match.params.id) {
+      this.fetchData(this.props.match.params.id);
+    }
   }
 
   renderToolbar() {
@@ -82,9 +84,4 @@ PortfolioItems.propTypes = {
   history: propTypes.object
 };
 
-export default withRouter(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(PortfolioItems)
-);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(PortfolioItems));
