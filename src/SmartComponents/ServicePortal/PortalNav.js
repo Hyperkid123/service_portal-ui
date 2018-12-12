@@ -15,111 +15,102 @@ const PORTFOLIO_URL_BASE = `/insights/platform/service-portal/portfolios/`;
 
 class PortalNav extends React.Component {
     state = {
-        activeItem: null,
-        activeGroup: 'platforms',
-        isEditing: false
+      activeItem: null,
+      activeGroup: 'platforms',
+      isEditing: false
     };
 
     componentDidMount() {
-        this.fetchData();
-        bindMethods(this, [ 'onSelect' ]);
+      this.fetchData();
+      bindMethods(this, [ 'onSelect' ]);
     }
 
     fetchData() {
     // TODO - only call if the user is an admin
-        this.props.fetchPlatforms();
-        this.props.fetchPortfolios();
+      this.props.fetchPlatforms();
+      this.props.fetchPortfolios();
     }
 
     platformNavItems = () => {
-        if (this.props.platforms) {
-            return this.props.platforms.map(item => (
-                <NavItem key={ item.id }
-                    itemId={ item.id }
-                    groupId="platforms"
-                    to={ PLATFORM_ITEM_URL_BASE + `${item.id}` }
-                >
-                    { item.name }
-                </NavItem>
-            ));
-        }
-        else {
-            return null;
-        }
+      if (this.props.platforms) {
+        return this.props.platforms.map(item => (
+          <NavItem key={ item.id }
+            itemId={ item.id }
+            groupId="platforms"
+            to={ PLATFORM_ITEM_URL_BASE + `${item.id}` }
+          >
+            { item.name }
+          </NavItem>
+        ));
+      }
+      else {
+        return null;
+      }
     };
 
     portfolioNavItems = () => {
-        if (this.props.portfolios) {
-            return this.props.portfolios.map(item => (
-                <NavItem
-                    key={ item.id }
-                    groupId="portfolios"
-                    to={ PORTFOLIO_URL_BASE + `${item.id}` }
-                >
-                    { item.name }
-                </NavItem>
-            ));
-        } else {
-            return null;
-        }
+      if (this.props.portfolios) {
+        return this.props.portfolios.map(item => (
+          <NavItem
+            key={ item.id }
+            groupId="portfolios"
+            to={ PORTFOLIO_URL_BASE + `${item.id}` }
+          >
+            { item.name }
+          </NavItem>
+        ));
+      } else {
+        return null;
+      }
     };
 
     onSelect = ({ itemId, groupId }) => this.setState({
-        activeItem: itemId,
-        activeGroup: groupId
+      activeItem: itemId,
+      activeGroup: groupId
     });
 
     render() {
-        return <Nav onSelect= { this.onSelect } aria-label="Service Portal">
-            <NavGroup title="Platforms">
-                { !this.props.isPlatformDataLoading && this.platformNavItems() }
-            </NavGroup>
-            <NavGroup title="Portfolios">
-                <NavItem
-                    key='all'
-                    groupId="portfolios"
-                    to={ ALL_PORTFOLIOS_URL }
-                >
+      return <Nav onSelect= { this.onSelect } aria-label="Service Portal">
+        <NavGroup title="Platforms">
+          { !this.props.isPlatformDataLoading && this.platformNavItems() }
+        </NavGroup>
+        <NavGroup title="Portfolios">
+          <NavItem
+            key='all'
+            groupId="portfolios"
+            to={ ALL_PORTFOLIOS_URL }
+          >
                     All Portfolios
-                </NavItem>
-                { !this.props.isLoading && this.portfolioNavItems() }
-            </NavGroup>
-        </Nav>;
+          </NavItem>
+          { !this.props.isLoading && this.portfolioNavItems() }
+        </NavGroup>
+      </Nav>;
     }
 }
 
-function mapStateToProps(state) {
-    return {
-        isPlatformDataLoading: state.PlatformStore.isPlatformDataLoading,
-        platforms: state.PlatformStore.platforms,
-        isLoading: state.PortfolioStore.isLoading,
-        portfolios: state.PortfolioStore.portfolios
-    };
-}
+const mapStateToProps = state => ({
+  isPlatformDataLoading: state.PlatformStore.isPlatformDataLoading,
+  platforms: state.PlatformStore.platforms,
+  isLoading: state.PortfolioStore.isLoading,
+  portfolios: state.PortfolioStore.portfolios
+});
 
-const mapDispatchToProps = dispatch => {
-    return {
-        fetchPlatforms: () => dispatch(fetchPlatforms()),
-        fetchPortfolios: () => dispatch(fetchPortfolios()),
-        toggleEdit: () => dispatch(toggleEdit())
-    };
-};
+const mapDispatchToProps = dispatch => ({
+  fetchPlatforms: () => dispatch(fetchPlatforms()),
+  fetchPortfolios: () => dispatch(fetchPortfolios()),
+  toggleEdit: () => dispatch(toggleEdit())
+});
 
 PortalNav.propTypes = {
-    portfolios: propTypes.array,
-    platforms: propTypes.array,
-    isPlatformDataLoading: propTypes.bool,
-    fetchPortfolios: propTypes.func,
-    fetchPlatforms: propTypes.func,
-    toggleEdit: propTypes.func,
-    isLoading: propTypes.bool,
-    location: propTypes.object,
-    history: propTypes.object
+  portfolios: propTypes.array,
+  platforms: propTypes.array,
+  isPlatformDataLoading: propTypes.bool,
+  fetchPortfolios: propTypes.func,
+  fetchPlatforms: propTypes.func,
+  toggleEdit: propTypes.func,
+  isLoading: propTypes.bool,
+  location: propTypes.object,
+  history: propTypes.object
 };
 
-export default withRouter(
-    connect(
-        mapStateToProps,
-        mapDispatchToProps
-    )(PortalNav)
-);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(PortalNav));
