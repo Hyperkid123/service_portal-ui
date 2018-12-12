@@ -12,41 +12,41 @@ import { Grid, GridItem } from '@patternfly/react-core';
 
 class App extends Component {
 
-    componentDidMount () {
-        insights.chrome.init();
-        insights.chrome.identifyApp('service-portal');
-        insights.chrome.navigation(buildNavigation());
+  componentDidMount () {
+    insights.chrome.init();
+    insights.chrome.identifyApp('service-portal');
+    insights.chrome.navigation(buildNavigation());
 
-        this.appNav = insights.chrome.on('APP_NAVIGATION', event => this.props.history.push(`/${event.navId}`));
-        this.buildNav = this.props.history.listen(() => insights.chrome.navigation(buildNavigation()));
-    }
+    this.appNav = insights.chrome.on('APP_NAVIGATION', event => this.props.history.push(`/${event.navId}`));
+    this.buildNav = this.props.history.listen(() => insights.chrome.navigation(buildNavigation()));
+  }
 
-    componentWillUnmount () {
-        this.appNav();
-        this.buildNav();
-    }
+  componentWillUnmount () {
+    this.appNav();
+    this.buildNav();
+  }
 
-    render () {
-        return (
-            <React.Fragment>
-                <Portal><Alerts /></Portal>
-                <Main style={ { marginLeft: 0, paddingLeft: 0, paddingTop: 0 } }>
-                    <Grid>
-                        <GridItem style={ { backgroundColor: '#FFFFFF' } } sm={ 4 } md={ 4 } lg={ 2 } xl={ 2 }>
-                            <PortalNav />
-                        </GridItem >
-                        <GridItem sm={ 8 } md={ 8 } lg={ 10 } xl={ 10 }>
-                            <Routes childProps={ this.props } />
-                        </GridItem>
-                    </Grid>
-                </Main>
-            </React.Fragment>
-        );
-    }
+  render () {
+    return (
+      <React.Fragment>
+        <Portal><Alerts /></Portal>
+        <Main style={ { marginLeft: 0, paddingLeft: 0, paddingTop: 0 } }>
+          <Grid>
+            <GridItem style={ { backgroundColor: '#FFFFFF' } } sm={ 4 } md={ 4 } lg={ 2 } xl={ 2 }>
+              <PortalNav />
+            </GridItem >
+            <GridItem sm={ 8 } md={ 8 } lg={ 10 } xl={ 10 }>
+              <Routes childProps={ this.props } />
+            </GridItem>
+          </Grid>
+        </Main>
+      </React.Fragment>
+    );
+  }
 }
 
 App.propTypes = {
-    history: PropTypes.object
+  history: PropTypes.object
 };
 
 /**
@@ -57,6 +57,5 @@ App.propTypes = {
 export default withRouter (connect()(App));
 
 function buildNavigation () {
-    const currentPath = window.location.pathname.split('/').slice(-1)[0];
-    return [];
+  return [];
 }

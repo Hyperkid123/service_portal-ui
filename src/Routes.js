@@ -26,30 +26,26 @@ const Portfolio = asyncComponent(() => import('./SmartComponents/Portfolio/Portf
 const Orders = asyncComponent(() => import('./SmartComponents/Order/Orders'));
 
 const paths = {
-    service_portal: '/',
-    platform_items: '/platform_items/:filter?',
-    portfolio_items: '/portfolio_items/:filter?',
-    portfolios: '/portfolios',
-    portfolio: '/portfolios/:id',
-    orders: '/orders'
-};
-
-type Props = {
-    childProps: any
+  service_portal: '/',
+  platform_items: '/platform_items/:filter?',
+  portfolio_items: '/portfolio_items/:filter?',
+  portfolios: '/portfolios',
+  portfolio: '/portfolios/:id',
+  orders: '/orders'
 };
 
 const InsightsRoute = ({ component: Component, rootClass, ...rest }) => {
-    const root = document.getElementById('root');
-    root.removeAttribute('class');
-    root.classList.add(`page__${rootClass}`, 'pf-l-page__main');
-    root.setAttribute('role', 'main');
+  const root = document.getElementById('root');
+  root.removeAttribute('class');
+  root.classList.add(`page__${rootClass}`, 'pf-l-page__main');
+  root.setAttribute('role', 'main');
 
-    return (<Component { ...rest } />);
+  return (<Component { ...rest } />);
 };
 
 InsightsRoute.propTypes = {
-    component: PropTypes.func,
-    rootClass: PropTypes.string
+  component: PropTypes.func,
+  rootClass: PropTypes.string
 };
 
 /**
@@ -60,18 +56,22 @@ InsightsRoute.propTypes = {
  *      path - https://prod.foo.redhat.com:1337/insights/advisor/rules
  *      component - component to be rendered when a route has been chosen.
  */
-export const Routes = (props: Props) => {
-    const path = props.childProps.location.pathname;
-    return (
-        <Switch>
-            <InsightsRoute exact path={ paths.service_portal } component={ ServicePortal } rootClass="service_portal" />
-            <InsightsRoute exact path={ paths.platform_items } component={ PlatformItems } rootClass="platform_items" />
-            <InsightsRoute exact path={ paths.portfolio_items } component={ PortfolioItems } rootClass="portfolio_items" />
-            <InsightsRoute exact path={ paths.portfolios } component={ Portfolios } rootClass="portfolios" />
-            <InsightsRoute exact path={ paths.portfolio } component={ Portfolio } rootClass="portfolio" />
-            <InsightsRoute exact path={ paths.orders } component={ Orders } rootClass="service_portal" />
-            { /* Finally, catch all unmatched routes */ }
-            <Route render={ () => (some(paths, p => p === path) ? null : <Redirect to={ paths.service_portal } />) } />
-        </Switch>
-    );
+export const Routes = props => {
+  const path = props.childProps.location.pathname;
+  return (
+    <Switch>
+      <InsightsRoute exact path={ paths.service_portal } component={ ServicePortal } rootClass="service_portal" />
+      <InsightsRoute exact path={ paths.platform_items } component={ PlatformItems } rootClass="platform_items" />
+      <InsightsRoute exact path={ paths.portfolio_items } component={ PortfolioItems } rootClass="portfolio_items" />
+      <InsightsRoute exact path={ paths.portfolios } component={ Portfolios } rootClass="portfolios" />
+      <InsightsRoute exact path={ paths.portfolio } component={ Portfolio } rootClass="portfolio" />
+      <InsightsRoute exact path={ paths.orders } component={ Orders } rootClass="service_portal" />
+      { /* Finally, catch all unmatched routes */ }
+      <Route render={ () => (some(paths, p => p === path) ? null : <Redirect to={ paths.service_portal } />) } />
+    </Switch>
+  );
+};
+
+Routes.propTypes = {
+  childProps: PropTypes.object
 };
