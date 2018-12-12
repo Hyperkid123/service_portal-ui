@@ -5,7 +5,7 @@ import propTypes from 'prop-types';
 import { Section } from '@red-hat-insights/insights-frontend-components';
 import { Toolbar, ToolbarGroup, ToolbarItem, ToolbarSection } from '@patternfly/react-core';
 import ContentGallery from '../../SmartComponents/ContentGallery/ContentGallery';
-import { fetchPortfolioItems, fetchPortfolioItemsWithPortfolio } from '../../Store/Actions/PortfolioActions';
+import { fetchPortfolioItems, fetchPortfolioItemsWithPortfolio } from '../../redux/Actions/PortfolioActions';
 import MainModal from '../Common/MainModal';
 import './portfolio.scss';
 
@@ -66,10 +66,10 @@ class PortfolioItems extends Component {
 }
 
 // use object destructing
-const mapStateToProps = state => ({
-  portfolioItems: state.PortfolioStore.portfolioItems,
-  isLoading: state.PortfolioStore.isLoading,
-  searchFilter: state.PortfolioStore.filterValue
+const mapStateToProps = ({ portfolioReducer: { portfolioItems, isLoading, filterValue }}) => ({
+  portfolioItems,
+  isLoading,
+  searchFilter: filterValue
 });
 
 const mapDispatchToProps = dispatch => ({

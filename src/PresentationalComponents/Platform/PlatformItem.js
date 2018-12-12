@@ -5,7 +5,7 @@ import './platformitem.scss';
 import propTypes from 'prop-types';
 import CatItemSvg from '../../assets/images/vendor-openshift.svg';
 import ImageWithDefault from '../Shared/ImageWithDefault';
-import { hideModal, showModal } from '../../Store/Actions/MainModalActions';
+import { hideModal, showModal } from '../../redux/Actions/MainModalActions';
 import { GridItem, Card, CardHeader, CardBody, CardFooter } from '@patternfly/react-core';
 import { Dropdown, DropdownItem, DropdownPosition, DropdownToggle } from '@patternfly/react-core';
 import itemDetails from '../../PresentationalComponents/Shared/CardCommon';
