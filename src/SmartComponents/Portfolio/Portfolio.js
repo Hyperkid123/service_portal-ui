@@ -18,9 +18,9 @@ import { css } from '@patternfly/react-styles';
 import spacingStyles from '@patternfly/patternfly-next/utilities/Spacing/spacing.css';
 import flexStyles from '@patternfly/patternfly-next/utilities/Flex/flex.css';
 import ContentGallery from '../../SmartComponents/ContentGallery/ContentGallery';
-import { fetchSelectedPortfolio, fetchPortfolioItemsWithPortfolio } from '../../Store/Actions/PortfolioActions';
+import { fetchSelectedPortfolio, fetchPortfolioItemsWithPortfolio } from '../../redux/Actions/PortfolioActions';
 import MainModal from '../Common/MainModal';
-import { hideModal, showModal } from '../../Store/Actions/MainModalActions';
+import { hideModal, showModal } from '../../redux/Actions/MainModalActions';
 import './portfolio.scss';
 
 class Portfolio extends Component {
@@ -126,11 +126,11 @@ class Portfolio extends Component {
   }
 }
 
-function mapStateToProps(state) {
+function mapStateToProps({ portfolioReducer: { selectedPortfolio, portfolioItems, isLoading }}) {
   return {
-    portfolio: state.PortfolioStore.selectedPortfolio,
-    portfolioItems: state.PortfolioStore.portfolioItems,
-    isLoading: state.PortfolioStore.isLoading
+    portfolio: selectedPortfolio,
+    portfolioItems,
+    isLoading
   };
 }
 
