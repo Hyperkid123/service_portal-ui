@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import propTypes from 'prop-types';
-import { parse } from 'querystring';
 import { Main } from '@red-hat-insights/insights-frontend-components';
 import { fetchPlatformItems } from '../../Store/Actions/PlatformActions';
 import { Toolbar, ToolbarGroup, ToolbarItem, ToolbarSection } from '@patternfly/react-core';
@@ -21,11 +20,13 @@ class PlatformItems extends Component {
   }
 
   componentDidMount() {
-    let filter = this.props.computedMatch.params.filter;
-    console.log('PlatformItems filter: ', filter);
-    let parsed = parse(filter);
-    console.log('PlatformItems parsed filter: ', parsed);
-    this.fetchData(parsed);
+    this.fetchData(this.props.match.params.id);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.match.params.id !== this.props.match.params.id) {
+      this.fetchData(this.props.match.params.id);
+    }
   }
 
   renderToolbar() {

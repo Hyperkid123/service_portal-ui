@@ -40,9 +40,13 @@ class Portfolio extends Component {
   }
 
   componentDidMount() {
-    let portfolioId = this.props.computedMatch.params.id;
-    console.log('Portfolio Id: ', portfolioId);
-    this.fetchData(portfolioId);
+    this.fetchData(this.props.match.params.id);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.match.params.id !== this.props.match.params.id) {
+      this.fetchData(this.props.match.params.id);
+    }
   }
 
   onKebabToggle = isOpen => this.setState({ isKebabOpen: isOpen });
@@ -148,9 +152,4 @@ Portfolio.propTypes = {
   history: propTypes.object
 };
 
-export default withRouter(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(Portfolio)
-);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Portfolio));
