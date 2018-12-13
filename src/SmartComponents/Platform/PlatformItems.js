@@ -7,6 +7,7 @@ import { fetchPlatformItems } from '../../redux/Actions/PlatformActions';
 import { Toolbar, ToolbarGroup, ToolbarItem, ToolbarSection } from '@patternfly/react-core';
 import ContentGallery from '../../SmartComponents/ContentGallery/ContentGallery';
 import MainModal from '../Common/MainModal';
+import PlatformItem from '../../PresentationalComponents/Platform/PlatformItem';
 import './platformitems.scss';
 
 class PlatformItems extends Component {
@@ -46,7 +47,7 @@ class PlatformItems extends Component {
 
   render() {
     let filteredItems = {
-      items: this.props.platformItems.platformItems,
+      items: this.props.platformItems.map(data => <PlatformItem key={ data.id } { ...data } />),
       isLoading: this.props.isLoading
     };
     return (
