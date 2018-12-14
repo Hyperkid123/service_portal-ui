@@ -42,8 +42,7 @@ class PlatformItem extends React.Component {
     //for each portfolio in portfolios, add an option in the portfolioOptions array
   };
 
-  onSelect() {
-    // Settings props to instance!
+  onSelect = () => {
     this.props.showModal({
       open: true,
       itemdata: this.props,
