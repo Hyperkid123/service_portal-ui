@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import propTypes from 'prop-types';
-import { Section } from '@red-hat-insights/insights-frontend-components';
 import {
   Toolbar,
   ToolbarGroup,
@@ -18,23 +18,21 @@ import { css } from '@patternfly/react-styles';
 import spacingStyles from '@patternfly/patternfly-next/utilities/Spacing/spacing.css';
 import flexStyles from '@patternfly/patternfly-next/utilities/Flex/flex.css';
 import ContentGallery from '../../SmartComponents/ContentGallery/ContentGallery';
-import { fetchSelectedPortfolio, fetchPortfolioItemsWithPortfolio } from '../../redux/Actions/PortfolioActions';
-import MainModal from '../Common/MainModal';
-import { hideModal, showModal } from '../../redux/Actions/MainModalActions';
+import { fetchSelectedPortfolio, fetchPortfolioItemsWithPortfolio, updatePortfolio } from '../../redux/Actions/PortfolioActions';
+import ModalWrapper from '../../PresentationalComponents/Shared/ModalWrapper';
+import FormRenderer from '../Common/FormRenderer';
+import { addNotification } from '@red-hat-insights/insights-frontend-components/components/Notifications';
+import { editPortfolioSchema } from '../../forms/schemas/portfolios';
+
 import './portfolio.scss';
-
 class Portfolio extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      portfolioId: '',
-      isKebabOpen: false,
-      isOpen: false
-    };
-    this.onClickEditPortfolio = this.onClickEditPortfolio.bind(this);
-  }
+  state = {
+    portfolioId: '',
+    isKebabOpen: false,
+    isOpen: false
+  };
 
-  fetchData(apiProps) {
+  fetchData = apiProps => {
     this.props.fetchSelectedPortfolio(apiProps);
     this.props.fetchPortfolioItemsWithPortfolio(apiProps);
   }
@@ -51,23 +49,37 @@ class Portfolio extends Component {
 
   onKebabToggle = isOpen => this.setState({ isKebabOpen: isOpen });
 
-  buildPortfolioActionKebab = () => {
-    const { isKebabOpen } = this.state;
+  toggleModal = isOpen => this.setState({ isOpen });
 
-    return (
-      <Dropdown
-        onToggle= { this.onKebabToggle }
-        onSelect= { this.onKebabSelect }
-        position = { DropdownPosition.right }
-        toggle={ <KebabToggle onToggle={ this.onKebabToggle } /> }
-        isOpen={ isKebabOpen }
-        isPlain
-      >
-        <DropdownItem component="button">Add Products</DropdownItem>
-        <DropdownItem component="button">Remove Products</DropdownItem>
-      </Dropdown>
-    );
-  };
+  onSubmit = data => {
+    this.props.updatePortfolio(data).then(() => {
+      this.toggleModal(false);
+      return this.props.fetchPortfolios();
+    });
+  }
+
+  onCancel = () => {
+    this.props.addNotification({
+      variant: 'warning',
+      title: 'Editing portfolio',
+      description: 'Edit portfolio was cancelled by the user.'
+    });
+    this.toggleModal(false);
+  }
+
+  buildPortfolioActionKebab = () => (
+    <Dropdown
+      onToggle= { this.onKebabToggle }
+      onSelect= { this.onKebabSelect }
+      position = { DropdownPosition.right }
+      toggle={ <KebabToggle onToggle={ this.onKebabToggle } /> }
+      isOpen={ this.state.isKebabOpen }
+      isPlain
+    >
+      <DropdownItem component="button">Add Products</DropdownItem>
+      <DropdownItem component="button">Remove Products</DropdownItem>
+    </Dropdown>
+  );
 
   portfolioActionsToolbar() {
     return (
@@ -79,7 +91,7 @@ class Portfolio extends Component {
         </ToolbarGroup>
         <ToolbarGroup  className={ 'pf-u-ml-auto-on-xl' }>
           <ToolbarItem className={ css(spacingStyles.mxLg) }>
-            <Button variant="plain" onClick={ () => { this.onClickEditPortfolio(this.props); } } aria-label="Edit Portfolio">
+            <Button variant="plain" onClick={ () => this.toggleModal(true) } aria-label="Edit Portfolio">
               Edit Portfolio
             </Button>
           </ToolbarItem>
@@ -96,32 +108,30 @@ class Portfolio extends Component {
     );
   }
 
-  onClickEditPortfolio() {
-    this.props.showModal({
-      open: true,
-      itemdata: this.props,
-      closeModal: this.props.hideModal
-    }, 'editportfolio');
-
-    this.setState({
-      ...this.state,
-      isOpen: !this.state.isOpen
-    });
-  };
-
   render() {
     let filteredItems = {
       items: this.props.portfolioItems.portfolioItems,
       isLoading: this.props.isLoading
     };
     return (
-      <Section>
+      <Fragment>
         <div className="action-toolbar">
           { this.portfolioActionsToolbar() }
         </div>
         <ContentGallery { ...filteredItems } />
-        <MainModal />
-      </Section>
+        <ModalWrapper
+          title="Edit Portfolio"
+          isOpen={ this.state.isOpen }
+          onClose={ this.onCancel }
+        >
+          <FormRenderer
+            schema={ editPortfolioSchema }
+            onSubmit={ this.onSubmit }
+            onCancel={ this.onCancel }
+            schemaType="mozilla"
+          />
+        </ModalWrapper>
+      </Fragment>
     );
   }
 }
@@ -134,14 +144,12 @@ function mapStateToProps({ portfolioReducer: { selectedPortfolio, portfolioItems
   };
 }
 
-const mapDispatchToProps = dispatch => ({
-  fetchPortfolioItemsWithPortfolio: apiProps => dispatch(fetchPortfolioItemsWithPortfolio(apiProps)),
-  fetchSelectedPortfolio: apiProps => dispatch(fetchSelectedPortfolio(apiProps)),
-  hideModal: () => dispatch(hideModal()),
-  showModal: (modalProps, modalType) => {
-    dispatch(showModal({ modalProps, modalType }));
-  }
-});
+const mapDispatchToProps = dispatch => bindActionCreators({
+  fetchPortfolioItemsWithPortfolio,
+  fetchSelectedPortfolio,
+  addNotification,
+  updatePortfolio
+}, dispatch);
 
 Portfolio.propTypes = {
   isLoading: propTypes.bool,

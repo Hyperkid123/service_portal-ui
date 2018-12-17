@@ -1,24 +1,13 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import './platformitem.scss';
 import propTypes from 'prop-types';
 import CatItemSvg from '../../assets/images/vendor-openshift.svg';
 import ImageWithDefault from '../Shared/ImageWithDefault';
-import { hideModal, showModal } from '../../redux/Actions/MainModalActions';
-import { GridItem, Card, CardHeader, CardBody } from '@patternfly/react-core';
-import { Dropdown, DropdownItem, DropdownPosition, DropdownToggle } from '@patternfly/react-core';
+import { GridItem, Card, CardHeader, CardBody, Dropdown, DropdownItem, DropdownPosition, DropdownToggle } from '@patternfly/react-core';
 import ItemDetails from '../../PresentationalComponents/Shared/CardCommon';
 
-const TO_DISPLAY = [ 'description' ];
+import './platformitem.scss';
 
-const mapDispatchToProps = dispatch => {
-  return {
-    hideModal: () => dispatch(hideModal()),
-    showModal: (modalProps, modalType) => {
-      dispatch(showModal({ modalProps, modalType }));
-    }
-  };
-};
+const TO_DISPLAY = [ 'description' ];
 
 class PlatformItem extends React.Component {
   state = {
@@ -42,19 +31,6 @@ class PlatformItem extends React.Component {
     //for each portfolio in portfolios, add an option in the portfolioOptions array
   };
 
-  onSelect = () => {
-    this.props.showModal({
-      open: true,
-      itemdata: this.props,
-      closeModal: this.props.hideModal
-    }, 'addportfolio');
-
-    this.setState({
-      ...this.state,
-      isOpen: !this.state.isOpen
-    });
-  };
-
   render() {
     return (
       <GridItem sm={ 6 } md={ 4 } lg={ 4 } xl={ 3 }>
@@ -75,7 +51,7 @@ class PlatformItem extends React.Component {
                     toggle={ <DropdownToggle onToggle={ this.onToggle }> Portfolio </DropdownToggle> }
                     id="dropdown-menu" itemdata={ [ this.props ] }
                   >
-                    <DropdownItem component="button">
+                    <DropdownItem onClick={ this.props.openModal } component="button">
                       Add Portfolio
                     </DropdownItem>
                   </Dropdown>
@@ -100,4 +76,4 @@ PlatformItem.propTypes = {
   name: propTypes.string
 };
 
-export default connect(null, mapDispatchToProps)(PlatformItem);
+export default PlatformItem;

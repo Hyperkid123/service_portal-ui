@@ -1,31 +1,46 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
+import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import propTypes from 'prop-types';
-import { Section } from '@red-hat-insights/insights-frontend-components';
 import { Toolbar, ToolbarGroup, ToolbarItem, Title, Button } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import spacingStyles from '@patternfly/patternfly-next/utilities/Spacing/spacing.css';
 import flexStyles from '@patternfly/patternfly-next/utilities/Flex/flex.css';
 import ContentGallery from '../../SmartComponents/ContentGallery/ContentGallery';
 import PortfolioCard from '../../PresentationalComponents/Portfolio/PorfolioCard';
-import { fetchPortfolios } from '../../redux/Actions/PortfolioActions';
-import MainModal from '../Common/MainModal';
-import { hideModal, showModal } from '../../redux/Actions/MainModalActions';
+import ModalWrapper from '../../PresentationalComponents/Shared/ModalWrapper';
+import FormRenderer from '../Common/FormRenderer';
+import { addPortfolio, fetchPortfolios } from '../../redux/Actions/PortfolioActions';
+import { addNotification } from '@red-hat-insights/insights-frontend-components/components/Notifications';
+import { addPortfolioSchema } from '../../forms/schemas/portfolios';
+
 import './portfolio.scss';
 
 class Portfolios extends Component {
   state = {
-    filteredItems: [],
     isOpen: false
   };
 
-  fetchData(apiProps) {
-    this.props.fetchPortfolios(apiProps);
-  }
-
   componentDidMount() {
     this.fetchData();
+  }
+
+  fetchData = apiProps => this.props.fetchPortfolios(apiProps);
+
+  toggleModal = isOpen => this.setState({ isOpen });
+
+  onSubmit = data => this.props.addPortfolio(data).then(() => {
+    this.toggleModal(false);
+    return this.props.fetchPortfolios();
+  });
+  onCancel = () => {
+    this.props.addNotification({
+      variant: 'warning',
+      title: 'Adding portfolio',
+      description: 'Adding portfolio was cancelled by the user.'
+    });
+    this.toggleModal(false);
   }
 
   renderToolbar() {
@@ -40,11 +55,7 @@ class Portfolios extends Component {
           <ToolbarItem>
             <Button
               variant="primary"
-              onClick={ () => {
-                // why using this.props to create porftolio?
-                // shoul be only open modal
-                this.onClickCreatePortfolio(this.props);
-              } }
+              onClick={ () => this.toggleModal(true) }
               aria-label="Create Portfolio"
             >
               Create Portfolio
@@ -55,34 +66,31 @@ class Portfolios extends Component {
     );
   }
 
-    onClickCreatePortfolio = () => {
-      this.props.showModal({
-        open: true,
-        closeModal: this.props.hideModal
-      }, 'addportfolio');
-
-      this.setState({
-        ...this.state,
-        isOpen: !this.state.isOpen
-      });
+  render() {
+    let filteredItems = {
+      items: this.props.portfolios.map((item) => <PortfolioCard key={ item.id } { ...item } />),
+      isLoading: this.props.isLoading
     };
-
-    render() {
-      let filteredItems = {
-        items: this.props.portfolios.map((item) => <PortfolioCard key={ item.id } { ...item } />),
-        isLoading: this.props.isLoading
-      };
-
-      return (
-        <Section>
-          <div className="action_toolbar">
-            { this.renderToolbar() }
-          </div>
-          <ContentGallery { ...filteredItems } />
-          <MainModal />
-        </Section>
-      );
-    }
+    return (
+      <Fragment>
+        { this.renderToolbar() }
+        <ContentGallery { ...filteredItems } />
+        <ModalWrapper
+          title="Create Portfolio"
+          isOpen={ this.state.isOpen }
+          onClose={ this.onCancel }
+          bodyProps={ { id: 'create-portfolio-modal' } }
+        >
+          <FormRenderer
+            schema={ addPortfolioSchema }
+            onSubmit={ this.onSubmit }
+            onCancel={ this.onCancel }
+            schemaType="mozilla"
+          />
+        </ModalWrapper>
+      </Fragment>
+    );
+  }
 }
 
 const mapStateToProps = ({ portfolioReducer: { portfolios, isLoading, filterValue }}) => ({
@@ -91,15 +99,11 @@ const mapStateToProps = ({ portfolioReducer: { portfolios, isLoading, filterValu
   searchFilter: filterValue
 });
 
-const mapDispatchToProps = dispatch => {
-  return {
-    fetchPortfolios: apiProps => dispatch(fetchPortfolios(apiProps)),
-    hideModal: () => dispatch(hideModal()),
-    showModal: (modalProps, modalType) => {
-      dispatch(showModal({ modalProps, modalType }));
-    }
-  };
-};
+const mapDispatchToProps = dispatch => bindActionCreators({
+  fetchPortfolios,
+  addNotification,
+  addPortfolio
+}, dispatch);
 
 Portfolios.propTypes = {
   filteredItems: propTypes.array,
@@ -112,9 +116,4 @@ Portfolios.propTypes = {
   history: propTypes.object
 };
 
-export default withRouter(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(Portfolios)
-);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Portfolios));

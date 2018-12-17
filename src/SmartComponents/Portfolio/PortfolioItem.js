@@ -1,20 +1,12 @@
 import React from 'react';
-import { withRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
 import './portfolioitem.scss';
 import propTypes from 'prop-types';
 import CatItemSvg from '../../assets/images/vendor-openshift.svg';
 import ImageWithDefault from '../../PresentationalComponents/Shared/ImageWithDefault';
 import itemDetails from '../../PresentationalComponents/Shared/CardCommon';
-import { hideModal, showModal } from '../../redux/Actions/MainModalActions';
 import { GridItem, Card, CardHeader, CardBody, CardFooter } from '@patternfly/react-core';
 
 const TO_DISPLAY = [ 'description' ];
-
-const mapDispatchToProps = dispatch => ({
-  hideModal: () => dispatch(hideModal()),
-  showModal: (modalProps, modalType) => dispatch(showModal({ modalProps, modalType }))
-});
 
 class PortfolioItem extends React.Component {
 
@@ -56,4 +48,4 @@ PortfolioItem.propTypes = {
   name: propTypes.string
 };
 
-export default withRouter(connect(null, mapDispatchToProps)(PortfolioItem));
+export default PortfolioItem;
