@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form } from 'patternfly-react';
+import { Form } from '@patternfly/react-core';
 import CatItemSvg from '../../assets/images/vendor-openshift.svg';
 import ImageWithDefault from '../../PresentationalComponents/Shared/ImageWithDefault';
 import propTypes from 'prop-types';

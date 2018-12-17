@@ -4,7 +4,7 @@ import { Button, Grid } from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import './orderservice.scss';
 import propTypes from 'prop-types';
-import { Icon } from 'patternfly-react';
+import { AngleRightIcon } from '@patternfly/react-icons';
 import { bindMethods } from '../../Helpers/Shared/Helper';
 import { OrderServiceFormSteps } from '../Order/OrderServiceFormConstants';
 import { Wizard } from 'patternfly-react';
@@ -130,7 +130,7 @@ class OrderModal extends Component {
                     <br/>
                     <br/>
                     <Button variant="primary" type="button" onClick={ this.onNext }>
-                                          Order<Icon type="fa" name="angle-right"/>
+                      Order<AngleRightIcon type="fa" name="angle-right"/>
                     </Button>
                   </div>
                 ) }

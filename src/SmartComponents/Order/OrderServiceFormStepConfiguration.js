@@ -1,11 +1,9 @@
 import React from 'react';
-// PF3?
-import { Form as PFForm } from 'patternfly-react';
 import propTypes from 'prop-types';
 import { connect } from 'react-redux';
 // replce with data driven form
 import Form from 'react-jsonschema-form';
-import { Bullseye, Button, Radio } from '@patternfly/react-core';
+import { Bullseye, Button, Radio, Form as PFForm } from '@patternfly/react-core';
 import '../../Utilities/jschema.scss';
 import { fetchServicePlans, sendSubmitOrder } from '../../redux/Actions/OrderActions';
 import { bindMethods } from '../../Helpers/Shared/Helper';
