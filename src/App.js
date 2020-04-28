@@ -33,6 +33,7 @@ const App = () => {
   const [auth, setAuth] = useState(false);
   const [userPermissions, setUserPermissions] = useState();
   const [userIdentity, setUserIdentity] = useState({ identity: {} });
+  const [eventSource, setEventSource] = useState();
   const dispatch = useDispatch();
   const history = useHistory();
   let unregister;
@@ -59,6 +60,17 @@ const App = () => {
         ),
       insights.chrome.auth.getUser().then((user) => {
         setUserIdentity(user);
+        console.log(user);
+        const eventSource = new EventSource(
+          `http://localhost:5002/subscribe?username=martin&channel=${user.identity.account_number}`
+        );
+        eventSource.addEventListener('portfolio.update', (message) =>
+          console.log(
+            'portfolio.update event message: ',
+            JSON.parse(message.data)
+          )
+        );
+
         return insights.chrome
           .getUserPermissions()
           .then((data) => setUserPermissions(data));
