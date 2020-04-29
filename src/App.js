@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Fragment } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useStore } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { Main } from '@redhat-cloud-services/frontend-components/components/Main';
@@ -21,6 +21,7 @@ import '@redhat-cloud-services/frontend-components/index.css';
 import { getAxiosInstance } from './helpers/shared/user-login';
 import { CATALOG_API_BASE, SOURCES_API_BASE } from './utilities/constants';
 import UserContext from './user-context';
+import ServerEvents from './utilities/server-events/server-events';
 
 smoothscroll.polyfill();
 
@@ -33,7 +34,7 @@ const App = () => {
   const [auth, setAuth] = useState(false);
   const [userPermissions, setUserPermissions] = useState();
   const [userIdentity, setUserIdentity] = useState({ identity: {} });
-  const [eventSource, setEventSource] = useState();
+  const store = useStore();
   const dispatch = useDispatch();
   const history = useHistory();
   let unregister;
@@ -60,16 +61,7 @@ const App = () => {
         ),
       insights.chrome.auth.getUser().then((user) => {
         setUserIdentity(user);
-        console.log(user);
-        const eventSource = new EventSource(
-          `http://localhost:5002/subscribe?username=martin&channel=${user.identity.account_number}`
-        );
-        eventSource.addEventListener('portfolio.update', (message) =>
-          console.log(
-            'portfolio.update event message: ',
-            JSON.parse(message.data)
-          )
-        );
+        ServerEvents.initialize(user, store);
 
         return insights.chrome
           .getUserPermissions()

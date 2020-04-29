@@ -8,6 +8,7 @@ import {
 import * as ActionTypes from '../action-types';
 import * as PortfolioHelper from '../../helpers/portfolio/portfolio-helper';
 import { defaultSettings } from '../../helpers/shared/pagination';
+import cachedActionCreator from './cache-creator';
 
 export const doFetchPortfolios = ({
   filter,
@@ -18,14 +19,22 @@ export const doFetchPortfolios = ({
   payload: PortfolioHelper.listPortfolios(filter, options)
 });
 
-export const fetchPortfolios = (options) => (dispatch) =>
-  dispatch(doFetchPortfolios(options));
+export const fetchPortfolios = (nextOptions) => (dispatch, getState) => {
+  const action = {
+    type: `${ActionTypes.FETCH_PORTFOLIOS}`,
+    nextOptions: {
+      ...nextOptions,
+      entity: 'portfolios'
+    }
+  };
+  return cachedActionCreator(action, doFetchPortfolios, dispatch, getState);
+};
 
 export const fetchPortfoliosWithState = (options = defaultSettings) => (
   dispatch
 ) =>
   dispatch(
-    doFetchPortfolios({ ...options, storeState: true, stateKey: 'portfolio' })
+    fetchPortfolios({ ...options, storeState: true, stateKey: 'portfolio' })
   );
 
 export const fetchPortfolioItems = (

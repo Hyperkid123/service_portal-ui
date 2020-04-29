@@ -19,6 +19,7 @@ import {
   UPDATE_PORTFOLIO_ITEM,
   RESTORE_PORTFOLIO_ITEM_PREV_STATE
 } from '../action-types';
+import { UPDATE_CACHE_ENTRY } from './cache-reducer';
 
 // Initial State
 export const portfoliosInitialState = {
@@ -160,6 +161,24 @@ const updatePortfolioItem = (state, { payload }) => ({
 const restorePrevState = (state) =>
   state.prevState ? { ...state.prevState } : { ...state };
 
+const updatePortfoliosFromCache = (state, { payload: { entity, data } }) => {
+  if (entity === 'portfolios') {
+    return {
+      ...state,
+      portfolios: {
+        ...state.portfolios,
+        data: state.portfolios.data.map((portfolio) =>
+          portfolio.id === data.id ? data : portfolio
+        )
+      },
+      selectedPortfolio:
+        state.selectedPortfolio.id === data.id ? data : state.selectedPortfolio
+    };
+  }
+
+  return state;
+};
+
 export default {
   [`${FETCH_PORTFOLIOS}_PENDING`]: setLoadingState,
   [`${FETCH_PORTFOLIOS}_FULFILLED`]: setPortfolios,
@@ -185,5 +204,6 @@ export default {
   [SET_PORTFOLIO_ITEMS]: setPortfolioItems,
   [UPDATE_TEMPORARY_PORTFOLIO_ITEM]: updateTemporaryPortfolioItem,
   [RESTORE_PORTFOLIO_ITEM_PREV_STATE]: restorePrevState,
-  [UPDATE_PORTFOLIO_ITEM]: updatePortfolioItem
+  [UPDATE_PORTFOLIO_ITEM]: updatePortfolioItem,
+  [UPDATE_CACHE_ENTRY]: updatePortfoliosFromCache
 };

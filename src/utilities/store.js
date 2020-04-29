@@ -35,6 +35,10 @@ import breadcrumbsReducer, {
 } from '../redux/reducers/breadcrumbs-reducer';
 import viewStateMiddleware from './view-state-middleware';
 import unAuthorizedMiddleware from './unauthorized-middleware';
+import cacheReducer, {
+  cacheInitialState
+} from '../redux/reducers/cache-reducer';
+import cacheMiddleware from './cache-middleware';
 
 const prodMiddlewares = [
   notificationsMiddleware({
@@ -54,6 +58,7 @@ const prodMiddlewares = [
 
 const baseMiddlewares = [
   thunk,
+  cacheMiddleware,
   promiseMiddleware,
   unAuthorizedMiddleware,
   viewStateMiddleware,
@@ -76,6 +81,7 @@ const registerReducers = (registry) => {
       breadcrumbsReducer,
       initialBreadcrumbsState
     ),
+    cacheReducer: applyReducerHash(cacheReducer, cacheInitialState),
     notifications
   });
 };
