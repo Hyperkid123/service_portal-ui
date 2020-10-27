@@ -5,7 +5,12 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
 const plugins = require('./webpack.plugins.js');
 const common = require('./webpack.common.js');
 
+const jsonpFunction = 'webpackCatalogJSONP';
 const commonConfig = {
+  externals: {
+    react: 'React',
+    'react-dom': 'ReactDOM'
+  },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
     alias: {
@@ -15,49 +20,12 @@ const commonConfig = {
   entry: {
     App: common.paths.entry
   },
-  optimization: {
-    splitChunks: {
-      chunks: 'all',
-      cacheGroups: {
-        default: false,
-        vendors: false,
-        framework: {
-          chunks: 'all',
-          name: 'framework',
-          test: /(?<!node_modules.*)[\\/]node_modules[\\/](react|react-dom|prop-types)[\\/]/,
-          priority: 40
-        },
-        lib: {
-          priority: 30,
-          minChunks: 1,
-          reuseExistingChunk: true
-        },
-        commons: {
-          name: 'commons',
-          minChunks: 47,
-          priority: 20
-        },
-        shared: {
-          priority: 10,
-          minChunks: 2,
-          reuseExistingChunk: true
-        }
-      },
-      maxInitialRequests: 25,
-      /**
-       * Smaller size will benefit from paraller asset loading and pre-caching, 244KB is recommended size
-       * This also helped with some module duplication issues.
-       * Now all reasobly sized modules ale properly re-used and larger ones are split into multipl chunks
-       */
-      maxSize: 244000,
-      minSize: 20000 // no point of having smaller size
-    }
-  },
   output: {
-    filename: 'js/[name].[contenthash].js',
+    filename: 'js/catalog.js',
     chunkFilename: 'js/[name].[contenthash].js',
     path: common.paths.public,
-    publicPath: common.paths.publicPath
+    publicPath: common.paths.publicPath,
+    jsonpFunction
   },
   module: {
     rules: [
@@ -101,7 +69,7 @@ const commonConfig = {
 const devConfig = {
   devServer: {
     contentBase: path.join(__dirname, '../dist'),
-    port: 8002,
+    port: 8003,
     https: true,
     historyApiFallback: true,
     hot: false,
