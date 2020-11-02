@@ -39,7 +39,6 @@ const App = () => {
   const dispatch = useDispatch();
   const i18l = useIntl();
   const history = useHistory();
-  let unregister;
 
   useEffect(() => {
     insights.chrome.init();
@@ -74,7 +73,7 @@ const App = () => {
     ]).then(() => setAuth(true));
 
     insights.chrome.identifyApp('catalog');
-    unregister = insights.chrome.on('APP_NAVIGATION', (event) => {
+    insights.chrome.on('APP_NAVIGATION', (event) => {
       /**
        * Handle navigation from insights main nav
        * Uses React history directly instead of browser history to avoid template realod.
@@ -86,8 +85,6 @@ const App = () => {
 
       ignoreRedirect = false;
     });
-
-    return () => unregister();
   }, []);
 
   if (!auth) {
