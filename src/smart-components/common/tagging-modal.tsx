@@ -95,6 +95,8 @@ const TaggingModal: React.ComponentType<TaggingModalProps> = ({
               clearedValue={[]}
               templateProps={{
                 submitLabel: formatMessage(actionMessages.save),
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 disableSubmit: ['pristine']
               }}
             />

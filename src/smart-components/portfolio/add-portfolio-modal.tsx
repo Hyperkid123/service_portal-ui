@@ -112,6 +112,8 @@ const AddPortfolioModal: React.ComponentType<AddPortfolioModalProps> = ({
         onClose: () => push(closeTarget),
         variant: 'small'
       }}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       templateProps={{
         submitLabel: portfolioId
           ? formatMessage(actionMessages.save)

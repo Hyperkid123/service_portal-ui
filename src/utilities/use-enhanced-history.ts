@@ -32,7 +32,7 @@ const useEnhancedHistory = ({
 }: {
   removeSearch?: boolean;
   keepHash?: boolean;
-} = {}): History<History.UnknownFacade> => {
+} = {}): History => {
   const history = useHistory();
   return {
     ...history,

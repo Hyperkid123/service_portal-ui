@@ -1,16 +1,11 @@
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 const path = require('path');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
   .BundleAnalyzerPlugin;
 const plugins = require('./webpack.plugins.js');
 const common = require('./webpack.common.js');
 
-const jsonpFunction = 'webpackCatalogJSONP';
 const commonConfig = {
-  externals: {
-    react: 'React',
-    'react-dom': 'ReactDOM'
-  },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
     alias: {
@@ -21,11 +16,13 @@ const commonConfig = {
     App: common.paths.entry
   },
   output: {
-    filename: 'js/catalog.js',
-    chunkFilename: 'js/[name].[contenthash].js',
-    path: common.paths.public,
-    publicPath: common.paths.publicPath,
-    jsonpFunction
+    filename: 'catalog.js',
+    chunkFilename: '[name].js',
+    path: path.resolve(__dirname, '../dist')
+  },
+  externals: {
+    react: 'React',
+    'react-dom': 'ReactDOM'
   },
   module: {
     rules: [
@@ -55,11 +52,6 @@ const commonConfig = {
             }
           }
         ]
-      },
-      {
-        parser: {
-          amd: false
-        }
       }
     ]
   },
@@ -68,13 +60,13 @@ const commonConfig = {
 
 const devConfig = {
   devServer: {
-    contentBase: path.join(__dirname, '../dist'),
     port: 8003,
     https: true,
     historyApiFallback: true,
     hot: false,
     inline: false,
-    disableHostCheck: true
+    disableHostCheck: true,
+    publicPath: '/apps/catalog/js'
   }
 };
 

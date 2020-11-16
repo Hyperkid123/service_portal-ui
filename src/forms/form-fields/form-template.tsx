@@ -2,9 +2,7 @@
 import React, { ReactNode, Fragment } from 'react';
 import styled from 'styled-components';
 import ReactDOM from 'react-dom';
-import PF4FormTemplate, {
-  FormTemplateProps as Pf4FormTemplateProps
-} from '@data-driven-forms/pf4-component-mapper/dist/cjs/form-template';
+import PF4FormTemplate from '@data-driven-forms/pf4-component-mapper/dist/cjs/form-template';
 import useFormApi from '@data-driven-forms/react-form-renderer/dist/cjs/use-form-api';
 import Schema from '@data-driven-forms/react-form-renderer/dist/cjs/schema';
 import FormSpy from '@data-driven-forms/react-form-renderer/dist/cjs/form-spy';
@@ -127,10 +125,12 @@ const ModalFormTemplate: React.ComponentType<ModalFormTemplateProps> = ({
   );
 };
 
-export interface FormTemplateProps extends Pf4FormTemplateProps {
+export interface FormTemplateProps {
   isModal?: boolean;
   modalProps?: InternalModalProps;
-  submitlabel?: ReactNode;
+  submitLabel?: ReactNode;
+  schema: Schema;
+  formFields: React.ComponentType[];
 }
 
 const FormTemplate: React.ComponentType<FormTemplateProps> = ({

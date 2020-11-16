@@ -137,6 +137,8 @@ const AddOrderProcess: React.ComponentType<AddOrderProcessProps> = ({
           submitLabel: edit
             ? intl.formatMessage(labelMessages.save)
             : intl.formatMessage(labelMessages.create),
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           disableSubmit: ['validating', 'pristine']
         }}
       />

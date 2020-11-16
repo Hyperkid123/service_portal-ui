@@ -280,6 +280,8 @@ const SharePortfolioModal: React.ComponentType<SharePortfolioModalProps> = ({
                 'shared-groups': initialShares()
               }}
               templateProps={{
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 disableSubmit: ['pristine', 'validating'],
                 submitLabel: formatMessage(
                   portfolioMessages.portfolioShareApply
